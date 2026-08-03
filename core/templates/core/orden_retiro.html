@@ -1,0 +1,376 @@
+{# core/templates/core/orden_retiro.html #}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Orden de Retiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --color-bg: #F5F6F8;
+      --color-surface: #FFFFFF;
+      --color-ink: #1C2530;
+      --color-ink-soft: #5B6B7C;
+      --color-primary: #1F3A5F;
+      --color-primary-hover: #16283F;
+      --color-accent: #E8871E;
+      --color-accent-soft: #FDF1E1;
+      --color-border: #DCE1E7;
+      --color-error: #B3412C;
+      --color-error-soft: #FBEAE6;
+      --color-success: #2F7A4F;
+      --font-display: 'IBM Plex Mono', 'Courier New', monospace;
+      --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --radius: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      background-color: var(--color-bg);
+      background-image:
+        linear-gradient(var(--color-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .ticket {
+      position: relative;
+      max-width: 560px;
+      margin: 0 auto;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 2px rgba(28, 37, 48, 0.04), 0 8px 24px rgba(28, 37, 48, 0.06);
+      overflow: hidden;
+    }
+
+    .ticket__accent {
+      height: 6px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    }
+
+    .ticket__body {
+      padding: 32px 36px 36px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      background: var(--color-accent-soft);
+      border: 1px solid var(--color-accent);
+      padding: 4px 10px;
+      border-radius: 3px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--color-ink-soft);
+      margin: 0 0 28px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-ink-soft);
+      margin-bottom: 6px;
+    }
+
+    .field input[type="text"],
+    .field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--color-ink);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(31, 58, 95, 0.12);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 13px 18px;
+      margin-top: 8px;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: var(--color-primary);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.05s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-submit:active {
+      transform: translateY(1px);
+    }
+
+    .btn-submit:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .notice {
+      display: flex;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      font-size: 14px;
+      background: var(--color-error-soft);
+      border: 1px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .notice__icon {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .notice ul {
+      margin: 4px 0 0;
+      padding-left: 18px;
+    }
+
+    .notice strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* --- Modal (pop-up de confirmación) --- */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 37, 48, 0.55);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-overlay.is-open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      max-width: 420px;
+      width: 100%;
+      padding: 28px 28px 24px;
+      box-shadow: 0 20px 50px rgba(28, 37, 48, 0.25);
+      text-align: center;
+    }
+
+    .modal__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-success-soft, #E9F5EE);
+      color: var(--color-success);
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+
+    .modal h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+    }
+
+    .modal p {
+      font-size: 14px;
+      color: var(--color-ink-soft);
+      margin: 0 0 4px;
+    }
+
+    .modal .ref-code {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 13px;
+      background: var(--color-accent-soft);
+      border: 1px solid var(--color-accent);
+      color: var(--color-primary);
+      padding: 4px 10px;
+      border-radius: 3px;
+      margin: 10px 0 20px;
+    }
+
+    .modal button {
+      width: 100%;
+      padding: 11px 18px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: var(--color-primary);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+
+    .modal button:hover {
+      background: var(--color-primary-hover);
+    }
+
+    @media (max-width: 480px) {
+      .ticket__body {
+        padding: 26px 20px 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ticket">
+    <div class="ticket__accent"></div>
+
+    <div class="ticket__body">
+      <span class="eyebrow">Manifiesto de retiro &middot; Alta</span>
+      <h1>Cargar orden de retiro</h1>
+      <p class="subtitle">Completá los datos del pedido. Queda registrado con estado pendiente hasta que otro equipo lo
+        tome.</p>
+
+      {% if errores %}
+      <div class="notice">
+        <span class="notice__icon">!</span>
+        <div>
+          <strong>No se pudo registrar la orden</strong>
+          <ul>
+            {% for error in errores %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'core:crear_orden_retiro' %}" novalidate>
+        {% csrf_token %}
+
+        <div class="field">
+          <label for="solicitante">Solicitante</label>
+          <input type="text" id="solicitante" name="solicitante" value="{{ datos.solicitante }}"
+            placeholder="Nombre de la persona o empresa">
+        </div>
+
+        <div class="field">
+          <label for="referencia_interna">Referencia interna</label>
+          <input type="text" id="referencia_interna" name="referencia_interna" value="{{ datos.referencia_interna }}"
+            placeholder="Ej: RET-2026-0134">
+        </div>
+
+        <div class="field">
+          <label for="tipo_servicio">Tipo de servicio</label>
+          <input type="text" id="tipo_servicio" name="tipo_servicio" value="{{ datos.tipo_servicio }}"
+            placeholder="Ej: retiro estándar, urgente, refrigerado">
+        </div>
+
+        <div class="field">
+          <label for="cantidad_bultos">Cantidad de bultos</label>
+          <input type="text" id="cantidad_bultos" name="cantidad_bultos" value="{{ datos.cantidad_bultos }}"
+            placeholder="Ej: 12">
+        </div>
+
+        <div class="field">
+          <label for="observaciones">Observaciones</label>
+          <textarea id="observaciones" name="observaciones"
+            placeholder="Información adicional para el equipo que ejecuta el retiro (opcional)">{{ datos.observaciones }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Registrar orden</button>
+      </form>
+    </div>
+  </div>
+
+  {% if orden_creada %}
+  <div class="modal-overlay" id="modalConfirmacion">
+    <div class="modal">
+      <div class="modal__icon">&#10003;</div>
+      <h2>Orden registrada con éxito</h2>
+      <p>La orden quedó pendiente de procesamiento.</p>
+      <span class="ref-code">{{ orden_creada.referencia_interna }}</span>
+      <button type="button" onclick="cerrarModal()">Cargar otra orden</button>
+    </div>
+  </div>
+
+  <script>
+    function cerrarModal() {
+      document.getElementById('modalConfirmacion').classList.remove('is-open');
+      document.querySelector('form').reset();
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('modalConfirmacion').classList.add('is-open');
+    });
+  </script>
+  {% endif %}
+
+</body>
+
+</html>

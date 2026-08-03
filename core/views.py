@@ -8,7 +8,6 @@ def _validar_datos_orden(datos):
     """
     Verifica que los campos esenciales del pedido estén presentes.
     Devuelve una lista de errores (vacía si todo está OK).
-    Esto es lógica de negocio, separada de la view y del template.
     """
     errores = []
 
@@ -34,6 +33,7 @@ def crear_orden_retiro(request):
     """
     GET  -> muestra el formulario vacío, no persiste nada.
     POST -> valida los datos y, si son válidos, crea la orden.
+    Ambos casos (y el de error) se renderizan con el mismo template.
     """
 
     if request.method == 'POST':
@@ -50,9 +50,9 @@ def crear_orden_retiro(request):
         if errores:
             contexto = {
                 'errores': errores,
-                'datos': datos,  # para repoblar el formulario con lo ya tipeado
+                'datos': datos,
             }
-            return render(request, 'core/form_orden.html', contexto)
+            return render(request, 'core/orden_retiro.html', contexto)
 
         orden = OrdenRetiro.objects.create(
             solicitante=datos['solicitante'].strip(),
@@ -63,9 +63,8 @@ def crear_orden_retiro(request):
             estado=OrdenRetiro.ESTADO_PENDIENTE,
         )
 
-        contexto = {'orden': orden}
-        return render(request, 'core/confirmacion_orden.html', contexto)
+        contexto = {'orden_creada': orden}
+        return render(request, 'core/orden_retiro.html', contexto)
 
     # request.method == 'GET'
-    contexto = {}
-    return render(request, 'core/form_orden.html', contexto)
+    return render(request, 'core/orden_retiro.html', {})
